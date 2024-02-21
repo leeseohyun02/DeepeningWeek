@@ -24,13 +24,4 @@ public class GameManager : MonoBehaviour
         GetCircle();
     }
 
-    public void TouchDown()
-    {
-        lastCircle.Drag();
-    }
-
-    public void TouchUp()
-    {
-        lastCircle.Drop();
-    }
 }
