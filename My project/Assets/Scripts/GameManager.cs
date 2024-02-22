@@ -43,6 +43,10 @@ public class GameManager : MonoBehaviour
 
     private void NextCircle()
     {
+        if (isOver) // 게임이 오버되어도 다시 생성되지 않게 (waitNext 코루틴이 돌지 않게끔)
+        {
+            return;
+        }
         Circle newCircle = GetCircle();
         lastCircle = newCircle;
         lastCircle.gameManager = this; //초기화
@@ -54,7 +58,7 @@ public class GameManager : MonoBehaviour
     }
 
     //코루틴
-    IEnumerator WaitNext()
+    IEnumerator WaitNext() 
     {
         while (lastCircle != null) // while에서 yield를 쓰지 않으면 무한루프
         {
@@ -93,5 +97,26 @@ public class GameManager : MonoBehaviour
             return;
        }
         isOver = true;
+
+        StartCoroutine(GameOverRoutine());  
+    }
+
+    IEnumerator GameOverRoutine() 
+    {
+        Circle[] circles = FindObjectsOfType<Circle>(); // Circle 스크립트를 포함하는 오브젝트들을 모두 찾아옴
+
+        for (int index = 0; index < circles.Length; index++)
+        {
+            circles[index]._rigidbody.simulated = false; //게임오버일 때 움직이지 않도록(합쳐지지 않게)
+            yield return new WaitForSeconds(0.1f);
+        }
+
+
+        //하나씩 접근해서 지우기
+        for (int index = 0; index < circles.Length; index++)
+        {
+            circles[index].Hide(Vector3.up * 100);
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 }

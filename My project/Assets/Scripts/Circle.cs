@@ -12,7 +12,7 @@ public class Circle : MonoBehaviour
     private bool isDrag;
     private bool isMerge; //합쳐져있는 상태
 
-    private Rigidbody2D _rigidbody;
+    public Rigidbody2D _rigidbody;
     private CircleCollider2D circleCollider;
     private Animator anim;
     private SpriteRenderer spriteRenderer;
@@ -90,25 +90,38 @@ public class Circle : MonoBehaviour
         }
     }
 
-    private void Hide(Vector2 targetPos)
+    public void Hide(Vector3 targetPos)
     {
         isMerge = true;
 
         _rigidbody.simulated = false;
         circleCollider.enabled = false;
 
+        if(targetPos == Vector3.up * 100)
+        {
+            EffectPlay(); // 게임 오버일 때도 이펙트 
+        }
+
         StartCoroutine(HideRoutine(targetPos)); // 움직임 호출
     }
 
-    IEnumerator HideRoutine(Vector2 targetPos)
+    IEnumerator HideRoutine(Vector3 targetPos)
     {
         int frameCount = 0;
 
         while(frameCount < 20) // 프레임당
         {
             frameCount++;
-            //내 자신 위치, 목표 지점, 이동 강도 (부드러운 움직임)
-            transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
+            if(targetPos != Vector3.up * 100)
+            {
+                //내 자신 위치, 목표 지점, 이동 강도 (부드러운 움직임)
+                transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
+            }
+            else if(targetPos == Vector3.up * 100)
+            {
+                transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, 0.2f); // 크기 줄여서 사라지게
+            }
+                       
             yield return null;
         }
         gameManager.score += (int)Mathf.Pow(2, level); //레벨별 제곱으로 점수 추가
