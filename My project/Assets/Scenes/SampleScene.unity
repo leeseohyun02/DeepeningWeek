@@ -812,7 +812,7 @@ GameObject:
   - component: {fileID: 1214801933}
   m_Layer: 0
   m_Name: Line
-  m_TagString: Untagged
+  m_TagString: Finish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -963,6 +963,7 @@ MonoBehaviour:
   circleGroup: {fileID: 32321292}
   effectPrefab: {fileID: 3124921526842467993, guid: 91ff215cbb7b3c5498613136334f21be, type: 3}
   effectGroup: {fileID: 136805762}
+  score: 0
   maxLevel: 2
 --- !u!4 &1550460285
 Transform:

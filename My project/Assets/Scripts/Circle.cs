@@ -15,12 +15,16 @@ public class Circle : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private CircleCollider2D circleCollider;
     private Animator anim;
+    private SpriteRenderer spriteRenderer;
+
+    private float deadTime;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         circleCollider = GetComponent<CircleCollider2D>();
         anim = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void OnEnable()
@@ -107,6 +111,7 @@ public class Circle : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
             yield return null;
         }
+        gameManager.score += (int)Mathf.Pow(2, level); //레벨별 제곱으로 점수 추가
 
         isMerge = false;
         gameObject.SetActive(false); //합쳐지면 오브젝트 비활성화
@@ -138,6 +143,32 @@ public class Circle : MonoBehaviour
         gameManager.maxLevel = Mathf.Max(level, gameManager.maxLevel);
 
         isMerge = false;
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.tag == "Finish") // 경계선에 닿았을 때
+        {
+            deadTime += Time.deltaTime;
+
+            if(deadTime > 2)
+            {
+                spriteRenderer.color = Color.red;
+            }
+            if(deadTime > 5)
+            {
+                gameManager.GameOver();
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.tag == "Finish") // 경계선으로부터 떨어질 때
+        {
+            deadTime = 0;
+            spriteRenderer.color = Color.white;
+        }
     }
 
     private void EffectPlay()

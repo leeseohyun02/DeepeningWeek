@@ -11,8 +11,10 @@ public class GameManager : MonoBehaviour
     public GameObject effectPrefab;
     public Transform effectGroup;
 
-
+    public int score;
     public int maxLevel;
+
+    public bool isOver;
 
     private void Awake()
     {   //프레임 설정
@@ -82,5 +84,14 @@ public class GameManager : MonoBehaviour
         }
         lastCircle.Drop();
         lastCircle = null; // 떨어뜨리면 null
+    }
+
+    public void GameOver()
+    {
+       if(isOver) // 한번만 실행 되도록
+       {
+            return;
+       }
+        isOver = true;
     }
 }
