@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
-{   
+{
+    [Header("Core")]
+    public int score;
+    public int maxLevel;
+    public bool isOver;
+
+    [Header("Circle")]
     public GameObject circlePrefab;
     public Transform circleGroup;
     public List<Circle> circlesPool;
 
+    [Header("Effect")]
     public GameObject effectPrefab;
     public Transform effectGroup;
     public List<ParticleSystem> effectPool;
@@ -17,6 +24,7 @@ public class GameManager : MonoBehaviour
     public int poolCursor;
     public Circle lastCircle;
 
+    [Header("Audio")]
     public AudioSource bgm;
     public AudioSource[] sfxPlayer;
     public AudioClip[] sfxClip;
@@ -31,11 +39,6 @@ public class GameManager : MonoBehaviour
     };
 
     int sfxCursor; //현재 가르키는 음원
-
-
-    public int score;
-    public int maxLevel;
-    public bool isOver;
 
     private void Awake()
     {   //프레임 설정
