@@ -6,6 +6,7 @@ using UnityEngine;
 public class Circle : MonoBehaviour
 {
     public GameManager gameManager;
+    public ParticleSystem effect;
 
     public int level;
     private bool isDrag;
@@ -71,7 +72,7 @@ public class Circle : MonoBehaviour
             {
                 float myX = transform.position.x;
                 float myY = transform.position.y;
-                float otherX = other.transform.position.x;
+                float otherX = other.transform.position.x; //other의 위치를 가져와야함
                 float otherY = other.transform.position.y;
                 
                 //현재 오브젝트가 아래있거나, 같은 위치에 있을 때 현재 오브젝트가 오른쪽에 있을 경우
@@ -127,6 +128,7 @@ public class Circle : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         anim.SetInteger("Level", level + 1);
+        EffectPlay();
 
         yield return new WaitForSeconds(0.3f);
 
@@ -136,5 +138,12 @@ public class Circle : MonoBehaviour
         gameManager.maxLevel = Mathf.Max(level, gameManager.maxLevel);
 
         isMerge = false;
+    }
+
+    private void EffectPlay()
+    {
+        effect.transform.position = transform.position;
+        effect.transform.localScale = transform.localScale; // 레벨별로 이펙트 크기도 달라야함
+        effect.Play();
     }
 }

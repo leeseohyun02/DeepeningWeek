@@ -8,6 +8,10 @@ public class GameManager : MonoBehaviour
     public GameObject circlePrefab;
     public Transform circleGroup;
 
+    public GameObject effectPrefab;
+    public Transform effectGroup;
+
+
     public int maxLevel;
 
     private void Awake()
@@ -18,10 +22,20 @@ public class GameManager : MonoBehaviour
     {
         NextCircle();
     }
+
     Circle GetCircle()
     {
-        GameObject instant = Instantiate(circlePrefab, circleGroup);
-        Circle instantCircle = instant.GetComponent<Circle>();
+        //이펙트 생성
+        GameObject instantEffectObj = Instantiate(effectPrefab, effectGroup);
+        ParticleSystem instantEffect = instantEffectObj.GetComponent<ParticleSystem>();
+
+        //오브젝트 생성
+        GameObject instantCircleObj = Instantiate(circlePrefab, circleGroup);
+        Circle instantCircle = instantCircleObj.GetComponent<Circle>();
+
+        //오브젝트 생성시 바로 이펙트 변수를 생성했던 것으로 초기화
+        instantCircle.effect = instantEffect;
+
         return instantCircle;
     }
 
