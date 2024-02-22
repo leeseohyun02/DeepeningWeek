@@ -9,8 +9,9 @@ public class Circle : MonoBehaviour
     public ParticleSystem effect;
 
     public int level;
-    private bool isDrag;
-    private bool isMerge; //합쳐져있는 상태
+    public bool isDrag;
+    public bool isMerge; //합쳐져있는 상태
+    public bool isAttach;
 
     public Rigidbody2D _rigidbody;
     private CircleCollider2D circleCollider;
@@ -64,6 +65,26 @@ public class Circle : MonoBehaviour
     {
         isDrag = false;
         _rigidbody.simulated = true; // 인스펙터에서 false 상태인 simulated를 true로
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) // 충돌 효과음
+    {
+        StartCoroutine(AttachRoutine());
+    }
+
+    IEnumerator AttachRoutine()
+    {
+        if(isAttach)
+        {
+            yield break; // 코루틴 탈출 
+        }
+
+        isAttach = true;
+        gameManager.SfxPlay(GameManager.Sfx.Attach);
+
+        yield return new WaitForSeconds(0.2f);
+
+        isAttach = false;
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -147,6 +168,7 @@ public class Circle : MonoBehaviour
 
         anim.SetInteger("Level", level + 1);
         EffectPlay();
+        gameManager.SfxPlay(GameManager.Sfx.LevelUp);
 
         yield return new WaitForSeconds(0.3f);
 

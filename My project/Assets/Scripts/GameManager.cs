@@ -11,6 +11,21 @@ public class GameManager : MonoBehaviour
     public GameObject effectPrefab;
     public Transform effectGroup;
 
+    public AudioSource bgm;
+    public AudioSource[] sfxPlayer;
+    public AudioClip[] sfxClip;
+    public enum Sfx
+    {
+        LevelUp,
+        Next,
+        Attach,
+        Button,
+        Over
+    };
+
+    int sfxCursor; //현재 가르키는 음원
+
+
     public int score;
     public int maxLevel;
 
@@ -22,7 +37,9 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        bgm.Play();
         NextCircle();
+      
     }
 
     Circle GetCircle()
@@ -53,6 +70,7 @@ public class GameManager : MonoBehaviour
 
         lastCircle.level = Random.Range(0, maxLevel);
         lastCircle.gameObject.SetActive(true);
+        SfxPlay(Sfx.Next);
 
         StartCoroutine(WaitNext());
     }
@@ -118,5 +136,38 @@ public class GameManager : MonoBehaviour
             circles[index].Hide(Vector3.up * 100);
             yield return new WaitForSeconds(0.1f);
         }
+
+        yield return new WaitForSeconds(1f);
+
+        SfxPlay(Sfx.Over);
+    }
+
+    public void SfxPlay(Sfx type) // 효과음 재생
+    {
+        switch (type)
+        {
+            case Sfx.LevelUp:
+                sfxPlayer[sfxCursor].clip = sfxClip[Random.Range(0, 3)];
+                break;
+
+            case Sfx.Next:
+                sfxPlayer[sfxCursor].clip = sfxClip[3];
+                break;
+
+            case Sfx.Attach:
+                sfxPlayer[sfxCursor].clip = sfxClip[4];
+                break;
+
+            case Sfx.Button:
+                sfxPlayer[sfxCursor].clip = sfxClip[5];
+                break;
+
+            case Sfx.Over:
+                sfxPlayer[sfxCursor].clip = sfxClip[6];
+                break;
+        }
+
+        sfxPlayer[sfxCursor].Play();
+        sfxCursor = (sfxCursor + 1) % sfxPlayer.Length; // 배열의 길이를 넘지 않도록 0,1,2 반복
     }
 }
