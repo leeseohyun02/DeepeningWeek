@@ -3,17 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
-{
-    public Circle lastCircle;
+{   
     public GameObject circlePrefab;
     public Transform circleGroup;
+    public List<Circle> circlesPool;
 
     public GameObject effectPrefab;
     public Transform effectGroup;
+    public List<ParticleSystem> effectPool;
+
+    [Range(1,30)]
+    public int poolSize;
+    public int poolCursor;
+    public Circle lastCircle;
 
     public AudioSource bgm;
     public AudioSource[] sfxPlayer;
     public AudioClip[] sfxClip;
+
     public enum Sfx
     {
         LevelUp,
@@ -28,12 +35,18 @@ public class GameManager : MonoBehaviour
 
     public int score;
     public int maxLevel;
-
     public bool isOver;
 
     private void Awake()
     {   //프레임 설정
         Application.targetFrameRate = 60;
+
+        circlesPool = new List<Circle>();
+        effectPool = new List<ParticleSystem>();
+        for(int index = 0; index < poolSize; index++)
+        {
+            MakeCircle();
+        }
     }
     private void Start()
     {
@@ -42,20 +55,37 @@ public class GameManager : MonoBehaviour
       
     }
 
-    Circle GetCircle()
+    Circle MakeCircle() //오브젝트 풀링
     {
         //이펙트 생성
         GameObject instantEffectObj = Instantiate(effectPrefab, effectGroup);
+        instantEffectObj.name = "Effect" + effectPool.Count;
         ParticleSystem instantEffect = instantEffectObj.GetComponent<ParticleSystem>();
+        effectPool.Add(instantEffect);
 
         //오브젝트 생성
         GameObject instantCircleObj = Instantiate(circlePrefab, circleGroup);
+        instantCircleObj.name = "Circle" + circlesPool.Count;
         Circle instantCircle = instantCircleObj.GetComponent<Circle>();
-
+        instantCircle.gameManager = this;
         //오브젝트 생성시 바로 이펙트 변수를 생성했던 것으로 초기화
         instantCircle.effect = instantEffect;
+        circlesPool.Add(instantCircle);
 
-        return instantCircle;
+        return instantCircle; // 자신이 만든 오브젝트 반환
+    }
+
+    Circle GetCircle()
+    {
+        for(int index = 0; index < circlesPool.Count; index++)
+        {
+            poolCursor = (poolCursor +1) % circlesPool.Count;
+            if (!circlesPool[poolCursor].gameObject.activeSelf) //비활성화일 때
+            {
+                return circlesPool[poolCursor];
+            }
+        }
+        return MakeCircle(); //모든 오브젝트가 활성화 되어있으면 새로 생성
     }
 
     private void NextCircle()
@@ -64,10 +94,7 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-        Circle newCircle = GetCircle();
-        lastCircle = newCircle;
-        lastCircle.gameManager = this; //초기화
-
+        lastCircle = GetCircle();
         lastCircle.level = Random.Range(0, maxLevel);
         lastCircle.gameObject.SetActive(true);
         SfxPlay(Sfx.Next);

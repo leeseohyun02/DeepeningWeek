@@ -28,9 +28,28 @@ public class Circle : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    private void OnEnable()
+    private void OnEnable() // 활성화 시 호출되는 이벤트 함수
     {
         anim.SetInteger("Level", level);
+    }
+
+    private void OnDisable() //비활성화 시 호출되는 이벤트 함수 (재사용위해 초기화시켜주기)
+    {
+        level = 0;
+        isDrag = false;
+        isMerge = false;
+        isAttach = false;
+
+        //트랜스폼 초기화
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity; 
+        transform.localScale = Vector3.zero;
+
+        //물리 초기화
+        _rigidbody.simulated = false;
+        _rigidbody.velocity = Vector2.zero; // rigidbody 2D이므로 Vector2
+        _rigidbody.angularVelocity = 0;
+        circleCollider.enabled = true;
     }
     // Update is called once per frame
     void Update()
