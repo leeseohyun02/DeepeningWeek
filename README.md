@@ -44,7 +44,9 @@
 ![image](https://github.com/leeseohyun02/DeepeningWeek/assets/78461967/11686597-711d-4e4b-8e0f-298def7cc071)
 ![image](https://github.com/leeseohyun02/DeepeningWeek/assets/78461967/7ec0687b-170a-4c53-b785-a3766d813f6f)  
 
-점수 시스템 - 현재 점수, 최고 점수를 PlayerPrefs로 저장하여 불러온다.
+점수 시스템 - 현재 점수, 최고 점수를 PlayerPrefs로 저장하여 불러온다.  
+
+
 
 
 ----
@@ -74,6 +76,25 @@
 }
 ```
 
+문제 : 2. 게임 종료시에도 오브젝트가 생성되는 현상   
+
+시도 및 해결 : 오브젝트를 생성하는 코루틴이 계속해서 돌고 있었기 때문에 게임 오버시 if(isOver) return을 사용하여 코루틴이 돌지 않겠끔 에외처리 해줌
+
+```
+   private void NextCircle()
+   {
+       if (isOver) // 게임이 오버되어도 다시 생성되지 않게 (waitNext 코루틴이 돌지 않게끔)
+       {
+           return;
+       }
+       lastCircle = GetCircle();
+       lastCircle.level = Random.Range(0, maxLevel);
+       lastCircle.gameObject.SetActive(true);
+       SfxPlay(Sfx.Next);
+
+       StartCoroutine(WaitNext());
+   }
+```
 
 
 
