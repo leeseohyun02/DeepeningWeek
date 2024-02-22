@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     public GameObject circlePrefab;
     public Transform circleGroup;
 
+    public int maxLevel;
+
     private void Awake()
     {   //프레임 설정
         Application.targetFrameRate = 60;
@@ -27,7 +29,9 @@ public class GameManager : MonoBehaviour
     {
         Circle newCircle = GetCircle();
         lastCircle = newCircle;
-        lastCircle.level = Random.Range(0, 8);
+        lastCircle.gameManager = this; //초기화
+
+        lastCircle.level = Random.Range(0, maxLevel);
         lastCircle.gameObject.SetActive(true);
 
         StartCoroutine(WaitNext());
