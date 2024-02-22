@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
     [Header("UI")]
     public Text socreText;
     public Text maxScoreText;
+    public GameObject endGroup;
+    public Text subScoreText;
 
     public enum Sfx
     {
@@ -180,10 +183,27 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        int maxScore = Mathf.Max(score, PlayerPrefs.GetInt("MaxScore"));//최고 점수 갱신
+        int maxScore = Mathf.Max(score, PlayerPrefs.GetInt("MaxScore")); //최고 점수 갱신
         PlayerPrefs.SetInt("MaxScore", maxScore);
 
+        subScoreText.text = "점수 : " + socreText.text;
+        endGroup.SetActive(true);
+
+        bgm.Stop();
         SfxPlay(Sfx.Over);
+    }
+
+    public void Reset()
+    {
+        SfxPlay(Sfx.Button);
+
+        StartCoroutine(ResetCouroutine());
+    }
+
+    IEnumerator ResetCouroutine()
+    {
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("StartScene");
     }
 
     public void SfxPlay(Sfx type) // 효과음 재생
