@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,6 +30,10 @@ public class GameManager : MonoBehaviour
     public AudioSource[] sfxPlayer;
     public AudioClip[] sfxClip;
 
+    [Header("UI")]
+    public Text socreText;
+    public Text maxScoreText;
+
     public enum Sfx
     {
         LevelUp,
@@ -50,6 +55,12 @@ public class GameManager : MonoBehaviour
         {
             MakeCircle();
         }
+
+        if (!PlayerPrefs.HasKey("MaxScore")) //처음 플레이 할 때
+        {
+            PlayerPrefs.SetInt("MaxScore", 0);
+        }
+        maxScoreText.text = PlayerPrefs.GetInt("MaxScore").ToString(); //최고점수
     }
     private void Start()
     {
@@ -169,6 +180,9 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
+        int maxScore = Mathf.Max(score, PlayerPrefs.GetInt("MaxScore"));//최고 점수 갱신
+        PlayerPrefs.SetInt("MaxScore", maxScore);
+
         SfxPlay(Sfx.Over);
     }
 
@@ -199,5 +213,10 @@ public class GameManager : MonoBehaviour
 
         sfxPlayer[sfxCursor].Play();
         sfxCursor = (sfxCursor + 1) % sfxPlayer.Length; // 배열의 길이를 넘지 않도록 0,1,2 반복
+    }
+
+    private void LateUpdate()
+    {
+        socreText.text = score.ToString();
     }
 }
